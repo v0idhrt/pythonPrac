@@ -1,38 +1,29 @@
-def build_english_latin_dictionary(entries):
-    english_latin_dict = {}
+def create_latin_english_dictionary(n, entries):
+    latin_english_dict = {}
 
     for entry in entries:
-        english_word, latin_word = entry.split()
-        english_latin_dict[english_word] = latin_word
+        english_word, latin_translations = entry.split(' - ')
+        latin_words = latin_translations.split(', ')
 
-    return english_latin_dict
+        for latin_word in latin_words:
+            if latin_word not in latin_english_dict:
+                latin_english_dict[latin_word] = []
+            latin_english_dict[latin_word].append(english_word)
 
-def translate_words(dictionary, words_to_translate):
-    results = []
-    for word in words_to_translate:
-        if word in dictionary:
-            results.append(f"{word} -> {dictionary[word]}")
-        else:
-            results.append(f"{word} -> Not found")
-    return results
+    return latin_english_dict
 
 if __name__ == "__main__":
-    n = int(input("Введите количество записей в словаре: "))
+    n = int(input("Введите количество английских слов в словаре: "))
     entries = []
 
     for _ in range(n):
-        entries.append(input("Введите английское слово и его латинский перевод: "))
+        entries.append(input("Введите английское слово и его латинские переводы: "))
 
-    m = int(input("Введите количество слов для перевода: "))
-    words_to_translate = []
+    latin_english_dict = create_latin_english_dictionary(n, entries)
 
-    for _ in range(m):
-        words_to_translate.append(input("Введите слово для перевода: "))
+    sorted_latin_words = sorted(latin_english_dict.keys())
 
-    english_latin_dict = build_english_latin_dictionary(entries)
-
-    results = translate_words(english_latin_dict, words_to_translate)
-
-    print("\nРезультаты перевода:")
-    for result in results:
-        print(result)
+    print("\nЛатинско-английский словарь:")
+    for latin_word in sorted_latin_words:
+        english_words = sorted(latin_english_dict[latin_word])
+        print(f"{latin_word} - {', '.join(english_words)}")
