@@ -1,41 +1,45 @@
 def load_stress_dictionary(n, entries):
     stress_dict = {}
+
     for entry in entries:
-        word, stressed_word = entry.split()
-        stress_dict[word] = stressed_word
+        word = entry.lower()
+        if word not in stress_dict:
+            stress_dict[word] = []
+        stress_dict[word].append(entry)  
+
     return stress_dict
 
-def check_stress(text, stress_dict):
-    results = []
+def count_errors(stress_dict, text):
+    errors = 0
     words = text.split()  
 
     for word in words:
-        if word in stress_dict:
-            if word == stress_dict[word]:
-                results.append("Correct")
-            else:
-                results.append("Incorrect")
-        else:
-            if word.count('`') == 1: 
-                results.append("Correct")
-            else:
-                results.append("Incorrect")
+        lower_word = word.lower()  
+        stress_count = sum(1 for char in word if char.isupper())
 
-    return results
+        if lower_word in stress_dict:
+            if stress_count == 0 or stress_count > 1:
+                errors += 1  
+            else:
+                if word not in stress_dict[lower_word]:
+                    errors += 1 
+        else:
+            if stress_count != 1:
+                errors += 1
+
+    return errors
 
 if __name__ == "__main__":
     n = int(input("Введите количество слов в словаре: "))
     entries = []
 
     for _ in range(n):
-        entries.append(input("Введите слово и его правильное ударение: "))
+        entries.append(input("Введите слово с ударением: "))
 
     text = input("Введите текст для проверки: ")
 
     stress_dict = load_stress_dictionary(n, entries)
 
-    results = check_stress(text, stress_dict)
+    error_count = count_errors(stress_dict, text)
 
-    print("\nРезультаты проверки:")
-    for result in results:
-        print(result)
+    print("\nКоличество ошибок:", error_count)
